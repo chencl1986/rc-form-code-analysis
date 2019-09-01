@@ -1,13 +1,57 @@
-import React from 'react';
-import {Button} from 'antd'
-import './App.css';
+/**
+ * Created by xm_chenli@huayun.com on 2019/09/01 16:49.
+ */
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <Button type="primary">Button</Button>
-    </div>
-  );
+import React from 'react'
+import './App.css'
+import {Button} from 'antd';
+import FormModal, {FormModalComponent} from './components/FormModal';
+
+interface Props {
+
 }
 
-export default App;
+class State {
+
+}
+
+class App extends React.Component<Props, State> {
+
+  formModalRef: React.RefObject<FormModalComponent> = React.createRef()
+
+  constructor(props: Props) {
+    super(props)
+
+    this.state = new State()
+  }
+
+  // 打开表单弹窗
+  private onFormModalButtonClick = (): void => {
+    const formModal = this.formModalRef.current
+    formModal && formModal.show()
+  }
+
+  componentDidMount() {
+
+  }
+
+  render() {
+    return (
+      <div
+        className={'app'}
+      >
+        <Button
+          onClick={this.onFormModalButtonClick}
+        >
+          表单弹窗
+        </Button>
+        <FormModal
+          wrappedComponentRef={this.formModalRef}
+        />
+      </div>
+    )
+  }
+
+}
+
+export default App
