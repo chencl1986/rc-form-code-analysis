@@ -87,15 +87,15 @@ export class FormModalComponent extends React.Component<Props, State> {
   }
 
   render() {
-    const visible = this.state.visible
     const form = this.props.form
     const username = this.props.form.getFieldValue('username')
     const sex: SexEnum = form.getFieldValue('sex')
 
     return (
       <Modal
-        visible={visible}
+        visible={this.state.visible}
         title={'新建用户'}
+        maskClosable
         onCancel={this.hide}
         onOk={this.onOk}
         afterClose={this.afterClose}

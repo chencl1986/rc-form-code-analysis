@@ -1,7 +1,7 @@
 import React from 'react'
 
 export interface Props {
-
+  wrappedComponentRef?: React.RefObject<any>
 }
 
 export class State {
@@ -12,7 +12,8 @@ export interface TimerProps {
   time: Date
 }
 
-function createTimer(WrappedComponent: React.ComponentClass<TimerProps>): React.ComponentClass {
+function createTimer(WrappedComponent: React.ComponentClass<TimerProps>): React.ComponentClass<Props> {
+
   class Timer extends React.Component<Props, State> {
 
     timer: number = 0
@@ -38,6 +39,7 @@ function createTimer(WrappedComponent: React.ComponentClass<TimerProps>): React.
     render() {
       return (
         <WrappedComponent
+          ref={this.props.wrappedComponentRef}
           time={this.state.time}
         />
       )
@@ -46,6 +48,7 @@ function createTimer(WrappedComponent: React.ComponentClass<TimerProps>): React.
   }
 
   return Timer
+
 }
 
 export default createTimer
