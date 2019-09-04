@@ -6,6 +6,7 @@ import React from 'react'
 import './App.css'
 import {Button} from 'antd';
 import FormModal, {FormModalComponent} from './components/FormModal';
+import ShowTimer from './components/ShowTimer';
 
 interface Props {
 
@@ -40,6 +41,7 @@ class App extends React.Component<Props, State> {
       <div
         className={'app'}
       >
+        <ShowTimer />
         <Button
           onClick={this.onFormModalButtonClick}
         >
