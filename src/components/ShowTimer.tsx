@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import createTimer, {TimerProps} from './createTimer';
+import createTimer, {TimerProps} from '../utils/createTimer';
 
 // 表单字段类型
 export interface Props extends TimerProps {
@@ -29,6 +29,7 @@ export class ShowTimerComponent extends React.Component<Props, State> {
 
 }
 
+// 导出用HOC创建的新组件
 const ShowTimer = createTimer(ShowTimerComponent)
 
 export default ShowTimer

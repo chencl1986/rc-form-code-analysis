@@ -8,6 +8,7 @@ import {Button} from 'antd';
 import FormModal, {FormModalComponent} from './components/FormModal';
 import ShowTimer from './components/ShowTimer';
 import ShowTimerModal, {ShowTimerModalComponent} from './components/ShowTimerModal';
+import NewFormModal, {NewFormModalComponent} from './components/NewFormModal';
 
 interface Props {
 
@@ -22,6 +23,8 @@ class App extends React.Component<Props, State> {
   showTimerModalRef: React.RefObject<ShowTimerModalComponent> = React.createRef()
 
   formModalRef: React.RefObject<FormModalComponent> = React.createRef()
+
+  newFormModalRef: React.RefObject<NewFormModalComponent> = React.createRef()
 
   constructor(props: Props) {
     super(props)
@@ -41,6 +44,12 @@ class App extends React.Component<Props, State> {
     formModal && formModal.show()
   }
 
+  // 打开新表单弹窗
+  private onNewFormModalButtonClick = (): void => {
+    const newFormModal = this.newFormModalRef.current
+    newFormModal && newFormModal.show()
+  }
+
   componentDidMount() {
 
   }
@@ -50,6 +59,11 @@ class App extends React.Component<Props, State> {
       <div
         className={'app'}
       >
+        <Button
+          onClick={this.onFormModalButtonClick}
+        >
+          表单弹窗
+        </Button>
         <ShowTimer />
         <Button
           onClick={this.onTimerModalButtonClick}
@@ -57,15 +71,18 @@ class App extends React.Component<Props, State> {
           时间弹窗
         </Button>
         <Button
-          onClick={this.onFormModalButtonClick}
+          onClick={this.onNewFormModalButtonClick}
         >
-          表单弹窗
+          新表单弹窗
         </Button>
+        <FormModal
+          wrappedComponentRef={this.formModalRef}
+        />
         <ShowTimerModal
           wrappedComponentRef={this.showTimerModalRef}
         />
-        <FormModal
-          wrappedComponentRef={this.formModalRef}
+        <NewFormModal
+          wrappedComponentRef={this.newFormModalRef}
         />
       </div>
     )

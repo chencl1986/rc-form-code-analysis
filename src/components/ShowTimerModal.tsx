@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import {Modal} from 'antd';
 import {ModalProps} from 'antd/lib/modal';
-import createTimer, {TimerProps} from './createTimer';
+import createTimer, {TimerProps} from '../utils/createTimer';
 
 // 表单字段类型
 export interface Props extends ModalProps, TimerProps {
@@ -52,6 +52,7 @@ export class ShowTimerModalComponent extends React.Component<Props, State> {
 
 }
 
+// 导出用HOC创建的新组件
 const ShowTimerModal = createTimer(ShowTimerModalComponent)
 
 export default ShowTimerModal

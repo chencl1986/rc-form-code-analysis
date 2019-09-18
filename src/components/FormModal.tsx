@@ -23,6 +23,7 @@ enum SexEnum {
   female = 'female'
 }
 
+// 性别名称枚举
 enum SexNameEnum {
   male = '男',
   female = '女'
@@ -64,8 +65,9 @@ export class FormModalComponent extends React.Component<Props, State> {
     })
   }
 
-  public onOk = () => {
-    this.props.form.validateFields(async (errors: any, {username, sex}: FormModalValues) => {
+  public onOk = async () => {
+    // 方法1：使用回调函数获取表单验证结果
+    /* this.props.form.validateFields(async (errors: any, {username, sex}: FormModalValues) => {
       if (!errors) {
         Modal.success({
           title: '表单输入结果',
@@ -73,22 +75,38 @@ export class FormModalComponent extends React.Component<Props, State> {
         })
         this.hide()
       }
-    })
+    }) */
+    // 方法2：使用async函数获取表单验证结果
+    try {
+      // @ts-ignore
+      const {username, sex}: FormModalValues = await this.props.form.validateFields()
+      Modal.success({
+        title: '表单输入结果',
+        content: `用户名：${username}，性别：${SexNameEnum[sex]}。`
+      })
+      this.hide()
+    } catch (error) {
+      console.error(error)
+      return error
+    }
   }
 
   // 关闭弹窗后初始化弹窗参数
   public afterClose = (): void => {
+    // 重置表单
     this.props.form.resetFields()
     this.setState(new State())
   }
 
   componentDidMount() {
+    // 为表单设置初始值，这里与getFieldDecorator方法中的initialValue重复。
     this.props.form.setFieldsValue(new FormModalValues())
   }
 
   render() {
     const form = this.props.form
-    const username = this.props.form.getFieldValue('username')
+    // 获取用户输入的表单数据
+    const username: string = form.getFieldValue('username')
     const sex: SexEnum = form.getFieldValue('sex')
 
     return (
@@ -106,10 +124,14 @@ export class FormModalComponent extends React.Component<Props, State> {
           {...formItemLayout}
         >
           {
+            // getFieldDecorator为表单组件绑定value和onChange等事件
             form.getFieldDecorator<FormModalValues>(
+              // 表单项数据字段
               'username',
               {
+                // 表单初始值
                 initialValue: '',
+                // 表单校验规则
                 rules: [
                   {
                     required: true,
@@ -127,10 +149,14 @@ export class FormModalComponent extends React.Component<Props, State> {
           {...formItemLayout}
         >
           {
+            // getFieldDecorator为表单组件绑定value和onChange等事件
             form.getFieldDecorator<FormModalValues>(
+              // 表单项数据字段
               'sex',
               {
+                // 表单初始值
                 initialValue: SexEnum.male,
+                // 表单校验规则
                 rules: [
                   {
                     required: true,
@@ -175,6 +201,6 @@ export class FormModalComponent extends React.Component<Props, State> {
 
 }
 
-const FormModal = Form.create()(FormModalComponent)
+const FormModal = Form.create<Props>()(FormModalComponent)
 
 export default FormModal
