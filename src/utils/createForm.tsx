@@ -4,55 +4,55 @@ import {observable, runInAction, toJS} from 'mobx';
 import hoistStatics from 'hoist-non-react-statics';
 import AsyncValidator, {Rules, ValidateError, ErrorList, RuleItem} from 'async-validator';
 
-// 
+// setFieldsValue设置表单数据时传入的数据类型
 export class Values {
-  [propName: string]: Field
+  [propName: string]: any
 }
 
-// 
+// 表单项设置
 export class FieldOption {
   initialValue?: any
   rules: RuleItem[] = []
 }
 
-// 
+// 表单项数据
 export class Field {
   value: any
   errors: ErrorList = []
 }
 
-// 
+// 表格数据
 export class Fields {
   [propName: string]: Field
 }
 
-// 
+// 表单项设置数据
 export class FieldMeta {
   name: string = ''
   fieldOption: FieldOption = new FieldOption()
 }
 
-// 
+// 表格设置数据
 export class FieldsMeta {
   [propName: string]: FieldMeta
 }
 
 export interface Props {
-  wrappedComponentRef: React.RefObject<React.ReactNode>
+  wrappedComponentRef: React.RefObject<React.Component<FormComponentProps, any, any>>
 }
 
-// 
+// 为原组件添加的form参数
 export interface FormProps {
   getFieldDecorator: (name: string, fieldOption: FieldOption) => (fieldElem: React.ReactElement) => React.ReactElement
   getFieldValue: (name: string) => any
-  setFieldsValue: (values: {[propName: string]: any}) => void
-  getFieldsValue: () => Fields
+  setFieldsValue: (values: any) => void
+  getFieldsValue: () => any
   validateFields: (callback?: (errors: any, values: any) => void) => void
   resetFields: () => void
   getFieldError: (name: string) => ErrorList
 }
 
-// 
+// 为原组件添加的props
 export interface FormComponentProps {
   form: FormProps
 }
@@ -61,14 +61,16 @@ export class State {
 
 }
 
-function createForm(WrappedComponent: React.ComponentType<any>): React.ComponentClass<Props> {
+function createForm(WrappedComponent: React.ComponentClass<FormComponentProps>): React.ComponentClass<Props> {
 
   @observer
   class Form extends React.Component<Props, State> {
 
+    // 表单数据
     @observable
     private fields: Fields = new Fields()
 
+    // 表单原始数据
     @observable
     private fieldsMeta: FieldsMeta = new FieldsMeta()
 
@@ -115,7 +117,7 @@ function createForm(WrappedComponent: React.ComponentType<any>): React.Component
       }
     }
 
-    // 获取表单元素
+    // 创建新表单项组件的HOC
     private getFieldDecorator = (
       name: string,
       fieldOption: FieldOption = new FieldOption()
@@ -130,18 +132,24 @@ function createForm(WrappedComponent: React.ComponentType<any>): React.Component
       }
     }
 
-    // 
+    // 获取表单项数据
     private getFieldValue = (name: string): any => {
       const field = toJS(this.fields)[name]
       return field && field.value
     }
 
-    // 
-    private getFieldsValue = (): Fields => {
-      return toJS(this.fields)
+    // 获取所有表单数据
+    private getFieldsValue = (): Values => {
+      const fields = toJS(this.fields)
+      let values: Values = {}
+      Object.keys(fields).forEach((name: string): void => {
+        values[name] = fields[name]
+      })
+
+      return values
     }
 
-    // 
+    // 设置表单项的值
     private setFieldsValue = (values: Values): void => {
       const fields = toJS(this.fields)
       Object.keys(values).forEach((name: string): void => {
@@ -150,8 +158,8 @@ function createForm(WrappedComponent: React.ComponentType<any>): React.Component
       this.fields = fields
     }
 
-    // 
-    private getRulesValues = (name?: string): {rules: Rules, values: Values} => {
+    // 获取用于表单校验的值和规则
+    private getRulesValues = (name?: string): {rules: Rules, values: Fields} => {
       const fields = toJS(this.fields)
       const fieldsMeta = toJS(this.fieldsMeta)
       const fieldMetaArr: FieldMeta[] = name ? [fieldsMeta[name]] : Object.values(fieldsMeta)
@@ -170,7 +178,7 @@ function createForm(WrappedComponent: React.ComponentType<any>): React.Component
       return {rules, values}
     }
 
-    // 
+    // 校验单个表单项
     private validateField = (name: string): void => {
       const {rules, values} = this.getRulesValues(name)
       const validator = new AsyncValidator(rules)
@@ -186,7 +194,7 @@ function createForm(WrappedComponent: React.ComponentType<any>): React.Component
       })
     }
 
-    // 
+    // 校验整个表单
     private validateFields = (callback?: (errors: ErrorList | null, values: Fields) => void): void => {
       const {rules, values} = this.getRulesValues()
       const validator = new AsyncValidator(rules)
@@ -203,10 +211,12 @@ function createForm(WrappedComponent: React.ComponentType<any>): React.Component
         }
         callback && callback(errors, values)
       })
+
+      // 强制渲染组件，避免
       this.forceUpdate()
     }
 
-    // 
+    // 重置表单
     private resetFields = (): void => {
       this.fields = Object.values(toJS(this.fieldsMeta)).reduce((fields: Fields, item: FieldMeta): Fields => {
         fields[item.name] = new Field()
@@ -215,7 +225,7 @@ function createForm(WrappedComponent: React.ComponentType<any>): React.Component
       }, new Fields())
     }
 
-    // 
+    // 获取表单项的校验结果
     private getFieldError = (name: string): ErrorList => {
       return this.fields[name] ? this.fields[name].errors : []
     }

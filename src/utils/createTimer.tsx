@@ -1,7 +1,7 @@
 import React from 'react'
 
 export interface Props {
-  wrappedComponentRef?: React.RefObject<any>
+  wrappedComponentRef?: React.RefObject<React.Component<TimerProps, any, any>>
 }
 
 export class State {

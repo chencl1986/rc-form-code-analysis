@@ -94,6 +94,8 @@ export class NewFormModalComponent extends React.Component<Props, State> {
     const sex: SexEnum = form.getFieldValue('sex')
     const usernameError: ErrorList = form.getFieldError('username')
     const sexError: ErrorList = form.getFieldError('sex')
+    const values: FormModalValues = form.getFieldsValue()
+    console.log(values)
 
     return (
       <Modal
