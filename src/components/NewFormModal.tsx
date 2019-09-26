@@ -65,7 +65,12 @@ export class NewFormModalComponent extends React.Component<Props, State> {
     })
   }
 
+  // 点击OK按钮
   public onOk = () => {
+    // 读取当前表单数据
+    const values: FormModalValues = this.props.form.getFieldsValue()
+    console.log(values)
+
     this.props.form.validateFields((errors: any, {username, sex}: FormModalValues) => {
       if (!errors) {
         Modal.success({
@@ -94,8 +99,6 @@ export class NewFormModalComponent extends React.Component<Props, State> {
     const sex: SexEnum = form.getFieldValue('sex')
     const usernameError: ErrorList = form.getFieldError('username')
     const sexError: ErrorList = form.getFieldError('sex')
-    const values: FormModalValues = form.getFieldsValue()
-    console.log(values)
 
     return (
       <Modal
