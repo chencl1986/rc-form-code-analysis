@@ -117,6 +117,8 @@ export class FormModalComponent extends React.Component<Props, State> {
         onCancel={this.hide}
         onOk={this.onOk}
         afterClose={this.afterClose}
+        okText={'确认'}
+        cancelText={'取消'}
       >
         <FormItem
           label={'请输入用户名'}
